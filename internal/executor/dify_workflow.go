@@ -1,16 +1,16 @@
 package executor
 
 import (
-	"fmt"
 	"github.com/google/uuid"
 	"github.com/leslieleung/dify-connector/pkg/dify"
 	"github.com/leslieleung/hotline/internal/misc"
+	"github.com/leslieleung/hotline/internal/ui"
 )
 
 type DifyWorkflow struct{}
 
 func (c *DifyWorkflow) Execute(params map[string]interface{}) (map[string]interface{}, error) {
-	fmt.Printf("params: %+v\n", params)
+	ui.Debugf("[dify workflow] params: %+v", params)
 	d := dify.New(misc.GetString(params, "host"), misc.GetString(params, "api_key"))
 	inputs := params["inputs"].([]interface{})
 	formatInput := make(map[string]interface{})

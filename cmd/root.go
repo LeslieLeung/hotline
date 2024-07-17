@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"github.com/leslieleung/hotline/cmd/exec"
+	"github.com/leslieleung/hotline/internal/ui"
 	"github.com/spf13/cobra"
 	"os"
 )
@@ -19,4 +20,5 @@ func Execute() {
 
 func init() {
 	rootCmd.AddCommand(exec.Cmd)
+	rootCmd.PersistentFlags().BoolVarP(&ui.Debug, "debug", "d", false, "enable debug output")
 }
