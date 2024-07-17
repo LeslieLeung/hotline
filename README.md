@@ -38,3 +38,16 @@ workflows:
 ```bash
 hotline exec translate -f translate.yaml --text="Good morning, how can I help you?"
 ```
+
+## Installation
+
+### brew
+
+```bash
+brew tap leslieleung/homebrew-tap
+brew install leslieleung/tap/hotline
+```
+
+### Binary
+
+Download the binaries from the [releases](https://github.com/LeslieLeung/hotline/releases).
