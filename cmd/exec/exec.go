@@ -1,7 +1,7 @@
 package exec
 
 import (
-	"fmt"
+	"github.com/leslieleung/hotline/internal/ui"
 	"github.com/leslieleung/hotline/internal/workflow"
 	"github.com/spf13/cobra"
 	"gopkg.in/yaml.v2"
@@ -21,14 +21,14 @@ var workflowFile string
 
 func run(_ *cobra.Command, args []string) {
 	if workflowFile == "" {
-		panic("workflow file is required")
+		ui.ErrorfExit("workflow file is required")
 	}
 	// open workflow file
 	fbs, err := os.ReadFile(workflowFile)
 	var wfs workflow.Spec
 	err = yaml.Unmarshal(fbs, &wfs)
 	if err != nil {
-		panic(err)
+		ui.ErrorfExit("error reading workflow file: %s", err)
 	}
 	// find the workflow
 	var run *workflow.Run
@@ -38,8 +38,7 @@ func run(_ *cobra.Command, args []string) {
 			run = workflow.NewRun(wf)
 			err := run.Execute()
 			if err != nil {
-				fmt.Printf("error executing workflow: %s\n", err)
-				os.Exit(1)
+				ui.ErrorfExit("error executing workflow: %s", err)
 			}
 			return
 		}

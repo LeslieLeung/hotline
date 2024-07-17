@@ -3,6 +3,7 @@ package workflow
 import (
 	"fmt"
 	"github.com/leslieleung/hotline/internal/executor"
+	"github.com/leslieleung/hotline/internal/ui"
 	"github.com/spf13/pflag"
 	"os"
 	"regexp"
@@ -49,7 +50,7 @@ func (r *Run) parseFlags() error {
 		}
 	}
 
-	fmt.Printf("inputs: %+v\n", r.inputs)
+	ui.Debugf("Inputs args: [%+v]", r.inputs)
 	return nil
 }
 
@@ -72,12 +73,15 @@ func (r *Run) executeSteps() error {
 		}
 
 		r.fillVariables(step.With)
-		fmt.Printf("with: %+v\n", step.With)
+		ui.Debugf("Executing step [name: %s, id: %s, uses: %s, params: %+v]",
+			step.Name, step.ID, step.Uses, step.With)
 
 		output, err := exec.Execute(step.With)
 		if err != nil {
 			return err
 		}
+		ui.Debugf("Step executed successfully [name: %s, id: %s, uses: %s, output: %+v]",
+			step.Name, step.ID, step.Uses, output)
 		// store output to steps cache
 		r.steps[step.ID] = make(map[string]interface{})
 		r.steps[step.ID].(map[string]interface{})["outputs"] = output
@@ -100,7 +104,7 @@ func (r *Run) fillVariables(with interface{}) interface{} {
 		for _, match := range matches {
 			value, err := getValueByPath(variables, match[1])
 			if err != nil {
-				fmt.Printf("error getting value by path: %s\n", err)
+				ui.Errorf("error getting value by path: %s\n", err)
 				continue
 			}
 			withTyped = strings.ReplaceAll(withTyped, match[0], fmt.Sprint(value))
@@ -119,7 +123,7 @@ func (r *Run) fillVariables(with interface{}) interface{} {
 			withTyped[key] = r.fillVariables(value)
 		}
 	default:
-		// TODO log error
+		ui.Errorf("unsupported type: %T\n", with)
 	}
 	return with
 }
