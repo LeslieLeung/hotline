@@ -3,7 +3,8 @@ package executor
 import "fmt"
 
 type Executor interface {
-	Execute(params map[string]interface{}) (map[string]interface{}, error)
+	BindParams(params map[string]interface{}) error
+	Execute() (map[string]interface{}, error)
 }
 
 func GetExecutor(id string) (Executor, error) {
