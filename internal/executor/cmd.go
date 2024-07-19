@@ -1,7 +1,9 @@
 package executor
 
 import (
+	"fmt"
 	"github.com/leslieleung/hotline/internal/misc"
+	"github.com/leslieleung/hotline/internal/ui"
 	"os"
 	"os/exec"
 	"runtime"
@@ -15,21 +17,37 @@ import (
 // Output:
 // - stdout [string]: The standard output of the command.
 // - items [[]string]: The output split by the delimiter.
-type Cmd struct{}
+type Cmd struct {
+	Command     string
+	SplitOutput string
+}
 
-func (c *Cmd) Execute(params map[string]interface{}) (map[string]interface{}, error) {
+var _ Executor = (*Cmd)(nil)
+
+func (c *Cmd) BindParams(params map[string]interface{}) error {
+	ui.Debugf("[cmd] params: %+v\n", params)
 	command := misc.GetString(params, "command")
 	splitOutput := misc.GetString(params, "split_output")
 
-	cmd := exec.Command(getUserShell(), "-c", command)
+	if command == "" {
+		return fmt.Errorf("missing required parameter 'command'")
+	}
+
+	c.Command = command
+	c.SplitOutput = splitOutput
+	return nil
+}
+
+func (c *Cmd) Execute() (map[string]interface{}, error) {
+	cmd := exec.Command(getUserShell(), "-c", c.Command)
 	output, err := cmd.Output()
 	if err != nil {
 		return nil, err
 	}
 
 	items := make([]string, 0)
-	if splitOutput != "" {
-		items = strings.Split(string(output), splitOutput)
+	if c.SplitOutput != "" {
+		items = strings.Split(string(output), c.SplitOutput)
 	}
 	return map[string]interface{}{
 		"stdout": string(output),

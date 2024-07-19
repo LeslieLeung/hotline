@@ -45,7 +45,13 @@ func TestCmd_Execute(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			c := &Cmd{}
-			got, err := c.Execute(tt.args.params)
+			// Bind the parameters to the Cmd instance before execution
+			err := c.BindParams(tt.args.params)
+			if err != nil {
+				t.Errorf("BindParams() error = %v", err)
+				return
+			}
+			got, err := c.Execute()
 			if (err != nil) != tt.wantErr {
 				t.Errorf("Execute() error = %v, wantErr %v", err, tt.wantErr)
 				return

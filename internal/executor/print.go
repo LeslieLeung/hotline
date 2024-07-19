@@ -10,9 +10,20 @@ import (
 // - message [string, required]: The message to print.
 // Output:
 // - None
-type Print struct{}
+type Print struct {
+	Message string
+}
 
-func (c *Print) Execute(params map[string]interface{}) (map[string]interface{}, error) {
-	fmt.Printf("%+v\n", misc.GetString(params, "message"))
+var _ Executor = (*Print)(nil)
+
+func (c *Print) BindParams(params map[string]interface{}) error {
+	message := misc.GetString(params, "message")
+
+	c.Message = message
+	return nil
+}
+
+func (c *Print) Execute() (map[string]interface{}, error) {
+	fmt.Printf("%+v\n", c.Message)
 	return nil, nil
 }

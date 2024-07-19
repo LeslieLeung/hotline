@@ -75,8 +75,11 @@ func (r *Run) executeSteps() error {
 		r.fillVariables(step.With)
 		ui.Debugf("Executing step [name: %s, id: %s, uses: %s, params: %+v]",
 			step.Name, step.ID, step.Uses, step.With)
-
-		output, err := exec.Execute(step.With)
+		err = exec.BindParams(step.With)
+		if err != nil {
+			return err
+		}
+		output, err := exec.Execute()
 		if err != nil {
 			return err
 		}

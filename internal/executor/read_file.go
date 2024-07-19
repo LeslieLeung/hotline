@@ -1,7 +1,9 @@
 package executor
 
 import (
+	"fmt"
 	"github.com/leslieleung/hotline/internal/misc"
+	"github.com/leslieleung/hotline/internal/ui"
 	"os"
 )
 
@@ -10,11 +12,26 @@ import (
 // - path [string, required]: The path to the file to read.
 // Output:
 // - content [[]byte]: The content of the file.
-type ReadFile struct{}
+type ReadFile struct {
+	Path string
+}
 
-func (r *ReadFile) Execute(params map[string]interface{}) (map[string]interface{}, error) {
+var _ Executor = (*ReadFile)(nil)
+
+func (r *ReadFile) BindParams(params map[string]interface{}) error {
+	ui.Debugf("[read file] params: %+v\n", params)
 	path := misc.GetString(params, "path")
-	content, err := os.ReadFile(path)
+
+	if path == "" {
+		return fmt.Errorf("missing required parameter 'path'")
+	}
+
+	r.Path = path
+	return nil
+}
+
+func (r *ReadFile) Execute() (map[string]interface{}, error) {
+	content, err := os.ReadFile(r.Path)
 	if err != nil {
 		return nil, err
 	}
