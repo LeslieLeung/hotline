@@ -7,6 +7,13 @@ import (
 	"github.com/leslieleung/hotline/internal/ui"
 )
 
+// DifyWorkflow executes a Dify workflow.
+// Params:
+// - host [string, required]: The host of the Dify instance.
+// - api_key [string, required]: The API key of the Dify workflow.
+// - inputs [[]map[string]interface{}]: The inputs of the workflow.
+// Output:
+// - [map[string]interface{}]: The outputs of the workflow.
 type DifyWorkflow struct{}
 
 func (c *DifyWorkflow) Execute(params map[string]interface{}) (map[string]interface{}, error) {
